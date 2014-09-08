@@ -1,0 +1,6 @@
+*.swp
+*.pyc
+.ropeproject/
+code2html.egg-info/
+dist/
+build/
