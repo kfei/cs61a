@@ -169,7 +169,7 @@ def always_roll(n):
 
 # Experiments
 
-def make_averaged(fn, num_samples=1000):
+def make_averaged(fn, num_samples=30000):
     """Return a function that returns the average_value of FN when called.
 
     To implement this function, you will have to use *args syntax, a new Python
@@ -187,7 +187,14 @@ def make_averaged(fn, num_samples=1000):
     - In the other, the player rolls a 5 and 6, scoring 11.
     Thus, the average value is 6.0.
     """
-    "*** YOUR CODE HERE ***"
+    def ret(*args):
+        sum, i = 0, 0
+        while i < num_samples:
+            sum, i = sum + fn(*args), i + 1
+        return sum / num_samples
+
+    return ret
+
 
 def max_scoring_num_rolls(dice=six_sided):
     """Return the number of dice (1 to 10) that gives the highest average turn
@@ -198,7 +205,15 @@ def max_scoring_num_rolls(dice=six_sided):
     >>> max_scoring_num_rolls(dice)
     10
     """
-    "*** YOUR CODE HERE ***"
+    _max, number_of_dice, ret = 0, 10, 0
+    while number_of_dice > 0:
+        avg = make_averaged(roll_dice)(number_of_dice, dice)
+        _max = max(_max, avg)
+        if avg >= _max:
+            ret = number_of_dice
+        number_of_dice -= 1
+
+    return ret
 
 def winner(strategy0, strategy1):
     """Return 0 if strategy0 wins against strategy1, and 1 otherwise."""
@@ -216,7 +231,7 @@ def average_win_rate(strategy, baseline=always_roll(5)):
 
 def run_experiments():
     """Run a series of strategy experiments and report results."""
-    if True: # Change to False when done finding max_scoring_num_rolls
+    if False: # Change to False when done finding max_scoring_num_rolls
         six_sided_max = max_scoring_num_rolls(six_sided)
         print('Max scoring num rolls for six-sided dice:', six_sided_max)
         four_sided_max = max_scoring_num_rolls(four_sided)
@@ -231,7 +246,7 @@ def run_experiments():
     if False: # Change to True to test swap_strategy
         print('swap_strategy win rate:', average_win_rate(swap_strategy))
 
-    if False: # Change to True to test final_strategy
+    if True: # Change to True to test final_strategy
         print('final_strategy win rate:', average_win_rate(final_strategy))
 
     "*** You may add additional experiments as you wish ***"
@@ -242,8 +257,12 @@ def bacon_strategy(score, opponent_score, margin=8, num_rolls=5):
     """This strategy rolls 0 dice if that gives at least MARGIN points,
     and rolls NUM_ROLLS otherwise.
     """
-    "*** YOUR CODE HERE ***"
-    return None # Replace this statement
+    bacon_points = abs(opponent_score // 10 - opponent_score % 10) + 1
+
+    if bacon_points >= margin:
+        return 0
+    else:
+        return num_rolls
 
 def swap_strategy(score, opponent_score, margin=8, num_rolls=5):
     """This strategy rolls 0 dice when it would result in a beneficial swap and
@@ -251,17 +270,39 @@ def swap_strategy(score, opponent_score, margin=8, num_rolls=5):
     0 dice if that gives at least MARGIN points and rolls
     NUM_ROLLS otherwise.
     """
-    "*** YOUR CODE HERE ***"
-    return None # Replace this statement
+    bacon_points = abs(opponent_score // 10 - opponent_score % 10) + 1
 
+    if opponent_score == 2 * (score + bacon_points):
+        return 0
+    elif (score + bacon_points) == 2 * opponent_score:
+        return num_rolls
+    else:
+        return bacon_strategy(score, opponent_score, margin, num_rolls)
 
 def final_strategy(score, opponent_score):
     """Write a brief description of your final strategy.
 
-    *** YOUR DESCRIPTION HERE ***
+    See the per-line comments.
+    PS. The expected score of rolling a 4-sided dice is about 3.797.
+    PSS. This strategy get an average win rate greater than 0.55, is 0.56 possible?
     """
-    "*** YOUR CODE HERE ***"
-    return 5 # Replace this statement
+    bacon_points = abs(opponent_score // 10 - opponent_score % 10) + 1
+
+    # If bacon_points is greater than 3.797, leave opponent with 4-sided dice
+    if (score + bacon_points + opponent_score) % 7 == 0 and bacon_points >= 4:
+        return 0
+    # Try to trigger a beneficial swine swap by trying score only one point
+    elif 2 * (score + 1) == opponent_score:
+        return swap_strategy(score, opponent_score, 10, 10)
+    # Decrease num_rolls to 3 and margin to 4, more suitable for a 4-sided dice
+    elif (score + opponent_score) % 7 == 0:
+        return swap_strategy(score, opponent_score, 4, 3)
+    # More offensive when losing
+    elif score < opponent_score:
+        return swap_strategy(score, opponent_score, 9, 6)
+    # More defensive when leading
+    else:
+        return swap_strategy(score, opponent_score, 7, 4)
 
 
 ##########################

@@ -18,13 +18,11 @@ test = {
   'suites': [
     [
       {
-        'locked': True,
         'test': """
         >>> dice = make_test_dice(3, 1, 5, 6)
         >>> averaged_dice = make_averaged(dice, 1000)
         >>> averaged_dice()  # average of calling dice 1000 times
-        b82fd37ad7b62df1f9cbf1c4933f8584
-        # locked
+        3.75
         """,
         'type': 'doctest'
       },
