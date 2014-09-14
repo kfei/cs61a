@@ -4,3 +4,5 @@
 code2html.egg-info/
 dist/
 build/
+__pycache__/
+.ok_refresh
