@@ -246,12 +246,6 @@ def find_centroid(polygon):
     n = len(polygon) - 1
     x, y, p = latitude, longitude, polygon
 
-    # The case of zero-area (a straight line)
-    if n == 2:
-        c_x = (x(p[0]) + x(p[1])) / 2
-        c_y = (y(p[0]) + y(p[1])) / 2
-        return [c_x, c_y, 0]
-
     def area():
         sum = 0
         for i in range(n):
@@ -261,11 +255,16 @@ def find_centroid(polygon):
     area = area()
 
     def centroid():
+        # Just return the first vertex if area is zero (the last doctest)
+        if area == 0:
+            return [x(p[0]), y(p[0])]
+        # Otherwise compute the centroid by formula
         c_x, c_y = 0, 0
         for i in range(n):
             common_part = x(p[i]) * y(p[i + 1]) - x(p[i + 1]) * y(p[i])
             c_x += (x(p[i]) + x(p[i + 1])) * common_part
             c_y += (y(p[i]) + y(p[i + 1])) * common_part
+
         return [c_x / (6 * area), c_y / (6 * area)]
 
     return centroid() + [abs(area)]
