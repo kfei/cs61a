@@ -20,7 +20,7 @@ test = {
   'suites': [
     [
       {
-        'answer': '0ed81e06177bb33fafafc460b0b9d5bf',
+        'answer': 'keys are strings (state names), values are numbers (average sentiment values)',
         'choices': [
           'keys are strings (state names), values are numbers (average sentiment values)',
           'keys are strings (state names), values are sentiment objects',
@@ -28,7 +28,6 @@ test = {
           'keys are tweet objects, values are sentiment objects',
           'keys are tweet objects, values are numbers (average sentiment values)'
         ],
-        'locked': True,
         'question': """
         average_sentiments returns a dictionary. What are the keys
         and values of this dictionary?
@@ -36,19 +35,18 @@ test = {
         'type': 'concept'
       },
       {
-        'answer': '622e41065a4ee3f831cca008ea896fe2',
+        'answer': 'the state should not be included in the dictionary',
         'choices': [
           'the state should not be included in the dictionary',
           'the state should be included in the dictionary with a value of 0',
           'the state should be included in the dictionary with a value of None',
           'the state should be included in the dictionary with an empty list'
         ],
-        'locked': True,
         'question': 'What should average_sentiments do if a state has no tweets with sentiments?',
         'type': 'concept'
       },
       {
-        'answer': 'c017322fc3b3d69edc5f49175194ad84',
+        'answer': 'analyze_tweet_sentiment, which returns a sentiment object',
         'choices': [
           'analyze_tweet_sentiment, which returns a sentiment object',
           'analyze_tweet_sentiment, which returns a number',
@@ -56,7 +54,6 @@ test = {
           'get_word_sentiment, which returns a number',
           'get_word_sentiment, which returns a sentiment object'
         ],
-        'locked': True,
         'question': """
         What function computes the sentiment of a tweet, and what type of
         object does it return?

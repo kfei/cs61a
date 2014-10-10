@@ -20,37 +20,34 @@ test = {
   'suites': [
     [
       {
-        'answer': 'e0f88c90b471237f90e98da46a54f352',
+        'answer': 'geo_distance',
         'choices': [
           'geo_distance',
           'find_state_center',
           'make_position'
         ],
-        'locked': True,
         'question': 'What function calculates the distance between two positions?',
         'type': 'concept'
       },
       {
-        'answer': 'daee5bcea6287836fd0bb4b8f1006850',
+        'answer': 'A list of tweet objects',
         'choices': [
           'A list of tweet objects',
           'A list of position objects',
           'A dictionary of tweet objects',
           'A dictionary of position objects'
         ],
-        'locked': True,
         'question': 'What type of object is the parameter tweets?',
         'type': 'concept'
       },
       {
-        'answer': '99ec032ad11b60bd13b53364e87f17bc',
+        'answer': 'A dictionary whose keys are strings (state names) and values are lists of tweet objects',
         'choices': [
           'A dictionary whose keys are strings (state names) and values are lists of tweet objects',
           'A dictionary whose keys are strings (state names) and values are tweet objects',
           'A dictionary whose keys are tweet objects and values are strings (state names)',
           'A dictionary whose keys are tweet objects and values are position objects'
         ],
-        'locked': True,
         'question': 'What type of object does group_tweets_by_state return?',
         'type': 'concept'
       },

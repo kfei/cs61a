@@ -344,7 +344,22 @@ def group_tweets_by_state(tweets):
     >>> tweet_string(california_tweets[0])
     '"welcome to san francisco" @ (38, -122)'
     """
-    "*** YOUR CODE HERE ***"
+    def add_nearest_state_to_tweet(tweet):
+        """ Return a pair of a tweet and its nearest state. """
+        location = tweet_location(tweet)
+        nearest_state = 'CA'
+        for s in us_states:
+            min_distance = geo_distance(location, find_state_center(us_states[nearest_state]))
+            distance = geo_distance(location, find_state_center(us_states[s]))
+            if distance < min_distance:
+                nearest_state = s
+        return (nearest_state, tweet)
+
+    tweet_pairs = []
+    for t in tweets:
+        tweet_pairs.append(add_nearest_state_to_tweet(t))
+
+    return group_by_key(tweet_pairs)
 
 def average_sentiments(tweets_by_state):
     """Calculate the average sentiment of the states by averaging over all
@@ -359,7 +374,25 @@ def average_sentiments(tweets_by_state):
     Arguments:
     tweets_by_state -- A dictionary from state names to lists of tweets
     """
-    "*** YOUR CODE HERE ***"
+    def tweets_average_sentiment(tweets):
+        total, count = 0, 0
+        for t in tweets:
+            sentiment_of_t = analyze_tweet_sentiment(t)
+            if has_sentiment(sentiment_of_t):
+                count += 1
+                total += sentiment_value(sentiment_of_t)
+        if count > 0:
+            return total / count
+        else:
+            return None
+
+    ret = {}
+    for s in tweets_by_state:
+        average = tweets_average_sentiment(tweets_by_state[s])
+        if average is not None:
+            ret[s] = average
+
+    return ret
 
 ##########################
 # Command Line Interface #
