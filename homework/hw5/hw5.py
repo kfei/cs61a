@@ -27,7 +27,14 @@ def shuffle(cards):
     ['A♡', 'A♢', 'A♤', 'A♧', '2♡', '2♢', '2♤', '2♧', '3♡', '3♢', '3♤', '3♧']
     """
     assert len(cards) % 2 == 0, 'len(cards) must be even'
-    "*** YOUR CODE HERE ***"
+
+    half_length = len(cards) // 2
+    first, second = cards[:half_length], cards[half_length:]
+    ret = []
+    for i in range(half_length):
+        ret += [first[i], second[i]]
+
+    return ret
 
 def trade(first, second):
     """Exchange the smallest prefixes of first and second that have equal sum.
@@ -58,7 +65,18 @@ def trade(first, second):
     """
     m, n = 1, 1
     equal_prefix = lambda: sum(first[:m]) == sum(second[:n])
-    "*** YOUR CODE HERE ***"
+    
+    def helper():
+        nonlocal m, n
+        while m <= len(first) and n <= len(second):
+            if sum(first[:m]) == sum(second[:n]):
+                return
+            elif sum(first[:m]) < sum(second[:n]):
+                m += 1
+            else:
+                n += 1
+    helper()
+
     if equal_prefix():
         first[:m], second[:n] = second[:n], first[:m]
         return 'Deal!'
@@ -128,7 +146,11 @@ def has_prefix(s, prefix):
     >>> has_prefix(link(2, empty), link(2, link(3, empty)))
     False
     """
-    "*** YOUR CODE HERE ***"
+    if prefix == empty:
+        return True
+    elif s == empty:
+        return False
+    return first(s) == first(prefix) and has_prefix(rest(s), rest(prefix))
 
 def has_sublist(s, sublist):
     """Returns whether sublist appears somewhere within linked list s.
@@ -152,7 +174,11 @@ def has_sublist(s, sublist):
     >>> has_sublist(x, link('A', x))
     False
     """
-    "*** YOUR CODE HERE ***"
+    if sublist == empty:
+        return True
+    elif s ==  empty:
+        return False
+    return has_prefix(s, sublist) or has_sublist(rest(s), sublist)
 
 def has_61A_gene(dna):
     """Returns whether linked list dna contains the CATCAT gene.
@@ -172,7 +198,10 @@ def has_61A_gene(dna):
     >>> has_61A_gene(end)
     False
     """
-    "*** YOUR CODE HERE ***"
+    cat = link('C', link('A', link('T', empty)))
+    catcat = link('C', link('A', link('T', cat)))
+
+    return has_sublist(dna, catcat)
 
 def make_withdraw(balance, password):
     """Return a password-protected withdraw function.
