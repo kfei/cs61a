@@ -65,7 +65,7 @@ def trade(first, second):
     """
     m, n = 1, 1
     equal_prefix = lambda: sum(first[:m]) == sum(second[:n])
-    
+
     def helper():
         nonlocal m, n
         while m <= len(first) and n <= len(second):
@@ -226,7 +226,23 @@ def make_withdraw(balance, password):
     >>> w(10, 'l33t')
     "Your account is locked. Attempts: ['hwat', 'a', 'n00b']"
     """
-    "*** YOUR CODE HERE ***"
+    attempts = []
+    def withdraw(amount, pwd):
+        nonlocal balance, attempts
+        if len(attempts) == 3:
+            return "Your account is locked. Attempts: %s" % attempts
+
+        if pwd != password:
+            attempts.append(pwd)
+            return 'Incorrect password'
+
+        if amount > balance:
+            return 'Insufficient funds'
+
+        balance -= amount
+        return balance
+
+    return withdraw
 
 def make_joint(withdraw, old_password, new_password):
     """Return a password-protected withdraw function that has joint access to
@@ -266,7 +282,16 @@ def make_joint(withdraw, old_password, new_password):
     >>> make_joint(w, 'hax0r', 'hello')
     "Your account is locked. Attempts: ['my', 'secret', 'password']"
     """
-    "*** YOUR CODE HERE ***"
+    test = withdraw(0, old_password)
+    if type(test) == str:
+        return test
+
+    def joint_withdraw(amount, pwd):
+        if pwd == old_password or pwd == new_password:
+            return withdraw(amount, old_password)
+        return withdraw(amount, pwd)
+
+    return joint_withdraw
 
 
 ######################
