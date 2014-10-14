@@ -310,7 +310,10 @@ def triangle_area(a, b, h):
     base = 15.0
     height = 10.0
     """
-    "*** YOUR CODE HERE ***"
+    w, u = [connector() for _ in range(2)]
+    multiplier(a, w, u)
+    multiplier(b, h, u)
+    constant(w, 2)
 
 def squarer(a, b):
     """The constraint that a*a=b.
@@ -327,7 +330,21 @@ def squarer(a, b):
     Y = 16
     X = 4.0
     """
-    "*** YOUR CODE HERE ***"
+    # Given b, to compute a we need to find square root of b => sqrt(b, 2)
+    def sqrt(x, y):
+        return pow(x, (1 / y))
+
+    # This function is no use because there is no chance we have to compute
+    # the constant two by a and b, but to reuse ternary_constraint() we still
+    # provide this, otherwise we have to implement binary_constraint() etc.
+    def always_two(x, y):
+        return 2
+
+    two = connector()
+    constant(two, 2)
+
+    # The main idea is to rewrite the relation a * a = b to a ^ 2 = b
+    return ternary_constraint(a, two, b, pow, always_two, sqrt)
 
 def pythagorean(a, b, c):
     """Connect a, b, and c into a network for the Pythagorean theorem:
@@ -341,7 +358,12 @@ def pythagorean(a, b, c):
     C = 13
     B = 12.0
     """
-    "*** YOUR CODE HERE ***"
+    u, v, w = [connector() for _ in range(3)]
+
+    squarer(a, u)
+    squarer(b, v)
+    adder(u, v, w)
+    squarer(c, w)
 
 def connector(name=None):
     """A connector between constraints.
