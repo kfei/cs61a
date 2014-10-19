@@ -27,7 +27,38 @@ class VendingMachine(object):
     >>> v.deposit(15)
     'Machine is out of stock. Here is your $15.'
     """
-    "*** YOUR CODE HERE ***"
+    def __init__(self, product, price):
+        self.product = product
+        self.price = price
+        self.balance = 0
+        self.stock = 0
+
+    def restock(self, amount):
+        self.stock += amount
+        return 'Current {0} stock: {1}'.format(self.product, self.stock)
+
+    def deposit(self, amount):
+        if self.stock == 0:
+            return 'Machine is out of stock. Here is your ${0}.'.format(amount)
+
+        self.balance += amount
+        return 'Current balance: ${0}'.format(self.balance)
+
+    def vend(self):
+        if self.stock == 0 and self.balance == 0:
+            return 'Machine is out of stock.'
+
+        change = self.balance - self.price
+        if change < 0:
+            return 'You must deposit ${0} more.'.format(-change)
+        elif change > 0:
+            self.balance = 0
+            self.stock -= 1
+            return 'Here is your {0} and ${1} change.'.format(self.product, change)
+        else:
+            self.balance = 0
+            self.stock -= 1
+            return 'Here is your {0}.'.format(self.product)
 
 class MissManners(object):
     """A container class that only forward messages that say please.
@@ -65,7 +96,18 @@ class MissManners(object):
     >>> fussy_three.ask('please __add__', 4)
     7
     """
-    "*** YOUR CODE HERE ***"
+    def __init__(self, to):
+        self.to = to
+
+    def ask(self, sentence, *args):
+        if sentence[:6] != 'please':
+            return 'You must learn to say please first.'
+
+        method = sentence[7:]
+        if hasattr(self.to, method):
+            return getattr(self.to, method)(*args)
+        else:
+            return 'Thanks for asking, but I know not how to {0}'.format(method)
 
 
 ##########################################
@@ -104,7 +146,53 @@ def make_class(attributes, base_classes=()):
     attributes -- class attributes
     base_classes -- a sequence of classes
     """
-    "*** YOUR CODE HERE ***"
+    def get_value(name):
+        if name in attributes:
+            return attributes[name]
+
+        if len(base_classes) == 1:
+            return base_classes[0]['get'](name)
+
+        if len(base_classes) > 1:
+            for b in mro()[1:]:
+                if b['hasattr'](name):
+                    return b['get'](name)
+
+    def set_value(name, value):
+        attributes[name] = value
+
+    def new(*args):
+        return init_instance(cls, *args)
+
+    def hasattr(name):
+        if name in attributes:
+            return True
+        return False
+
+    def mro_helper(c):
+        ret = []
+        def search(c, level=0):
+            ret.append((c, level))
+            if len(c['get']('bases')) > 0:
+                for b in c['get']('bases'):
+                    search(b, level + 1)
+        search(c, 0)
+        return ret
+
+    def mro():
+        ret = []
+        mro_seq = mro_helper(cls)
+        depth = max([c[1] for c in mro_seq])
+        for level in range(depth):
+            for c in mro_seq:
+                if c[1] == level and c[0] not in ret:
+                    ret.append(c[0])
+        return ret
+
+    attributes['bases'] = base_classes
+    cls = {'get': get_value, 'set': set_value, 'new': new,
+           'mro': mro, 'hasattr': hasattr}
+    return cls
 
 def init_instance(some_class, *args):
     """Return a new instance of some_class, initialized with args."""
@@ -206,5 +294,3 @@ def make_as_seen_on_tv_account_class():
     return make_class(locals(), [CheckingAccount, SavingsAccount])
 
 AsSeenOnTVAccount = make_as_seen_on_tv_account_class()
-
-
