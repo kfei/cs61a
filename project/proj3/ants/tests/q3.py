@@ -7,36 +7,31 @@ test = {
   'suites': [
     [
       {
-        'locked': True,
         'test': r"""
         >>> # Simple test for Place
         >>> exit = Place('Test Exit')
         >>> exit.exit
-        39bf9133062430f919b45aa38441a719
-        # locked
+        None
         # choice: None
         # choice: exit
         # choice: hive
         # choice: colony.queen
         >>> exit.entrance
-        39bf9133062430f919b45aa38441a719
-        # locked
+        None
         # choice: None
         # choice: exit
         # choice: hive
         # choice: colony.queen
         >>> place = Place('Test Place', exit)
         >>> place.exit
-        52a90476639bfd566293fe0ceb92146f
-        # locked
+        exit
         # choice: None
         # choice: exit
         # choice: hive
         # choice: colony.queen
         # choice: place
         >>> exit.entrance
-        2d02cc78eb2a9ec7632d5858754a9bc8
-        # locked
+        place
         # choice: None
         # choice: exit
         # choice: hive

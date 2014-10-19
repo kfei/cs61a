@@ -9,18 +9,16 @@ test = {
   'suites': [
     [
       {
-        'answer': '0a1ba6fbdd7b538e3579cd509fd4aa28',
+        'answer': 'random_or_none, defined in ant.py',
         'choices': [
           'random_or_none, defined in ant.py',
           'random.random(), defined in the "random" module',
           'getitem, defined in the "operators" module'
         ],
-        'locked': True,
         'question': 'What function selects a random bee from a list of bees?',
         'type': 'concept'
       },
       {
-        'locked': True,
         'test': r"""
         >>> # Testing nearest_bee
         >>> thrower = ThrowerAnt()
@@ -32,17 +30,14 @@ test = {
         >>> colony.places["tunnel_0_6"].add_insect(far_bee)
         >>> hive = colony.hive
         >>> thrower.nearest_bee(hive)
-        fe38a55cb790cbd21e0c461bf76c915b
-        # locked
+        near_bee
         # choice: near_bee
         # choice: far_bee
         >>> thrower.action(colony)    # Attack!
         >>> near_bee.armor            # Should do 1 damage
-        d051d778cc59e30ceee412e76d1fdbc4
-        # locked
+        1
         >>> thrower.place             # Don't change self.place!
-        2d02cc78eb2a9ec7632d5858754a9bc8
-        # locked
+        place
         # choice: place
         # choice: hive
         # choice: colony.queen
@@ -51,7 +46,6 @@ test = {
         'type': 'doctest'
       },
       {
-        'locked': True,
         'test': r"""
         >>> # Testing Nearest bee not in the hive
         >>> thrower = ThrowerAnt()
@@ -60,8 +54,7 @@ test = {
         >>> bee = Bee(2)
         >>> hive.add_insect(bee)       # adding a bee to the hive
         >>> thrower.nearest_bee(hive)  # bee or None ?
-        39bf9133062430f919b45aa38441a719
-        # locked
+        None
         # choice: None
         # choice: bee
         # choice: thrower
@@ -72,7 +65,6 @@ test = {
     ],
     [
       {
-        'locked': True,
         'test': r"""
         >>> # Test that ThrowerAnt attacks bees on its own square
         >>> thrower = ThrowerAnt()
@@ -80,16 +72,14 @@ test = {
         >>> near_bee = Bee(2)
         >>> colony.places["tunnel_0_0"].add_insect(near_bee)
         >>> thrower.nearest_bee(colony.hive)   # near_bee or None ?
-        fe38a55cb790cbd21e0c461bf76c915b
-        # locked
+        near_bee
         # choice: near_bee
         # choice: None
         # choice: thrower
         # choice: hive
         >>> thrower.action(colony)   # Attack!
         >>> near_bee.armor           # should do 1 damage
-        d051d778cc59e30ceee412e76d1fdbc4
-        # locked
+        1
         """,
         'type': 'doctest'
       },

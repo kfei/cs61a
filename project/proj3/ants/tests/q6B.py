@@ -9,16 +9,13 @@ test = {
   'suites': [
     [
       {
-        'locked': True,
         'test': r"""
         >>> # Testing ScubaThrower parameters
         >>> scuba = ScubaThrower()
         >>> ScubaThrower.food_cost
-        9120598f73414c1b785655f8e4e2c576
-        # locked
+        5
         >>> scuba.armor
-        d051d778cc59e30ceee412e76d1fdbc4
-        # locked
+        1
         """,
         'type': 'doctest'
       },
@@ -57,29 +54,25 @@ test = {
         'type': 'doctest'
       },
       {
-        'locked': True,
         'test': r"""
         >>> # Testing if ScubaThrower is watersafe
         >>> water = Water('Water')
         >>> ant = ScubaThrower()
         >>> water.add_insect(ant)
         >>> ant.place
-        5d0ff896928a169c628d6a30a01b79f3
-        # locked
+        water
         # choice: water
         # choice: None
         # choice: colony.hive
         # choice: colony.queen
         >>> ant.armor
-        d051d778cc59e30ceee412e76d1fdbc4
-        # locked
+        1
         """,
         'type': 'doctest'
       }
     ],
     [
       {
-        'locked': True,
         'test': r"""
         >>> # Testing ScubaThrower on land
         >>> place1 = colony.places["tunnel_0_0"]
@@ -90,13 +83,11 @@ test = {
         >>> place2.add_insect(bee)
         >>> ant.action(colony)
         >>> bee.armor  # ScubaThrower can throw on land
-        b911fabd1c66f55e635ee4f72fd9b5c1
-        # locked
+        2
         """,
         'type': 'doctest'
       },
       {
-        'locked': True,
         'test': r"""
         >>> # Testing ScubaThrower in the water
         >>> water = Water("water")
@@ -108,8 +99,7 @@ test = {
         >>> target.add_insect(bee)
         >>> ant.action(colony)
         >>> bee.armor  # ScubaThrower can throw in water
-        b911fabd1c66f55e635ee4f72fd9b5c1
-        # locked
+        2
         """,
         'type': 'doctest'
       }

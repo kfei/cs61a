@@ -9,23 +9,18 @@ test = {
   'suites': [
     [
       {
-        'locked': True,
         'test': r"""
         >>> # Testing Long/ShortThrower paramters
         >>> short_t = ShortThrower()
         >>> long_t = LongThrower()
         >>> ShortThrower.food_cost
-        ef55ec9009ea0ac309cdd4cb3d407951
-        # locked
+        3
         >>> LongThrower.food_cost
-        ef55ec9009ea0ac309cdd4cb3d407951
-        # locked
+        3
         >>> short_t.armor
-        d051d778cc59e30ceee412e76d1fdbc4
-        # locked
+        1
         >>> long_t.armor
-        d051d778cc59e30ceee412e76d1fdbc4
-        # locked
+        1
         """,
         'type': 'doctest'
       },
@@ -100,7 +95,6 @@ test = {
     ],
     [
       {
-        'locked': True,
         'test': r"""
         >>> # Test LongThrower Hit
         >>> ant = LongThrower()
@@ -109,13 +103,11 @@ test = {
         >>> colony.places["tunnel_0_4"].add_insect(in_range)
         >>> ant.action(colony)
         >>> in_range.armor
-        d051d778cc59e30ceee412e76d1fdbc4
-        # locked
+        1
         """,
         'type': 'doctest'
       },
       {
-        'locked': True,
         'test': r"""
         >>> # Testing LongThrower miss
         >>> ant = LongThrower()
@@ -124,15 +116,13 @@ test = {
         >>> colony.places["tunnel_0_3"].add_insect(out_of_range)
         >>> ant.action(colony)
         >>> out_of_range.armor
-        b911fabd1c66f55e635ee4f72fd9b5c1
-        # locked
+        2
         """,
         'type': 'doctest'
       }
     ],
     [
       {
-        'locked': True,
         'test': r"""
         >>> # Test ShortThrower hit
         >>> ant = ShortThrower()
@@ -141,13 +131,11 @@ test = {
         >>> colony.places["tunnel_0_2"].add_insect(in_range)
         >>> ant.action(colony)
         >>> in_range.armor
-        d051d778cc59e30ceee412e76d1fdbc4
-        # locked
+        1
         """,
         'type': 'doctest'
       },
       {
-        'locked': True,
         'test': r"""
         >>> # Testing ShortThrower miss
         >>> ant = ShortThrower()
@@ -156,13 +144,11 @@ test = {
         >>> colony.places["tunnel_0_3"].add_insect(out_of_range)
         >>> ant.action(colony)
         >>> out_of_range.armor
-        b911fabd1c66f55e635ee4f72fd9b5c1
-        # locked
+        2
         """,
         'type': 'doctest'
       },
       {
-        'locked': True,
         'test': r"""
         >>> # Testing if max_range is looked up in the instance
         >>> ant = ShortThrower()
@@ -172,8 +158,7 @@ test = {
         >>> colony.places["tunnel_0_6"].add_insect(bee)
         >>> ant.action(colony)
         >>> bee.armor
-        d051d778cc59e30ceee412e76d1fdbc4
-        # locked
+        1
         """,
         'type': 'doctest'
       }
