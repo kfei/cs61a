@@ -39,8 +39,22 @@ class Place:
         There can be any number of Bees in a Place.
         """
         if insect.is_ant:
-            # Phase 4: Special handling for BodyguardAnt
-            "*** YOUR CODE HERE ***"
+            if self.ant is not None:
+                # If current ant is a BodyguardAnt and can contain the ant we
+                # are trying to add
+                if self.ant.container and self.ant.can_contain(insect):
+                    self.ant.contain_ant(insect)
+                    insect.place = self
+                    return
+
+                # If the ant we are trying to add is a BodyguardAnt and can
+                # contain the current ant
+                elif insect.container and insect.can_contain(self.ant):
+                    insect.contain_ant(self.ant)
+                    self.ant = insect
+                    insect.place = self
+                    return
+
             assert self.ant is None, 'Two ants in {0}'.format(self)
             self.ant = insect
         else:
@@ -52,7 +66,14 @@ class Place:
         if insect.is_ant:
             assert self.ant == insect, '{0} is not in {1}'.format(insect, self)
             # Phase 4: Special handling for BodyguardAnt and QueenAnt
-            "*** YOUR CODE HERE ***"
+            if insect.container:
+                insect.ant.place = self
+                self.ant = insect.ant
+                insect.place = None
+                return
+            if type(insect) == QueenAnt and not insect.imposter:
+                return
+
             self.ant = None
         else:
             self.bees.remove(insect)
@@ -134,15 +155,28 @@ class Ant(Insect):
     """An Ant occupies a place and does work for the colony."""
 
     is_ant = True
-    implemented = False  # Only implemented Ant classes should be instantiated
+    implemented = False
     damage = 0
     food_cost = 0
     watersafe = False
     blocks_path = True
+    container = False
+    doubled = False
 
     def __init__(self, armor=1):
         """Create an Ant with an armor quantity."""
         Insect.__init__(self, armor)
+
+    def can_contain(self, other):
+        """ Return true if and only if:
+        1) This ant is a container.
+        2) This ant does not already contain another ant.
+        3) The other ant is not a container.
+        """
+        if self.container and not self.ant and not other.container:
+            return True
+        else:
+            return False
 
 
 class HarvesterAnt(Ant):
@@ -433,6 +467,7 @@ def make_insane_assault_plan():
         plan.add_wave(time, 1)
     return plan.add_wave(15, 20)
 
+
 ##############
 # Extensions #
 ##############
@@ -546,18 +581,19 @@ class HungryAnt(Ant):
 class BodyguardAnt(Ant):
     """BodyguardAnt provides protection to other Ants."""
     name = 'Bodyguard'
-    "*** YOUR CODE HERE ***"
-    implemented = False
+    container = True
+    food_cost = 4
+    implemented = True
 
     def __init__(self):
         Ant.__init__(self, 2)
         self.ant = None  # The Ant hidden in this bodyguard
 
     def contain_ant(self, ant):
-        "*** YOUR CODE HERE ***"
+        self.ant = ant
 
     def action(self, colony):
-        "*** YOUR CODE HERE ***"
+        self.ant.action(colony)
 
 
 class QueenPlace:
@@ -567,22 +603,29 @@ class QueenPlace:
     (2) The place in which the QueenAnt resides.
     """
     def __init__(self, colony_queen, ant_queen):
-        "*** YOUR CODE HERE ***"
+        self.colony_queen = colony_queen
+        self.ant_queen = ant_queen
 
     @property
     def bees(self):
-        "*** YOUR CODE HERE ***"
+        return self.colony_queen.bees + self.ant_queen.bees
 
 
-class QueenAnt:  # You should change this line
+class QueenAnt(ScubaThrower):
     """The Queen of the colony.  The game is over if a bee enters her place."""
 
     name = 'Queen'
-    "*** YOUR CODE HERE ***"
-    implemented = False
+    food_cost = 6
+    implemented = True
+    instances = 0
+    imposter = False
 
     def __init__(self):
-        "*** YOUR CODE HERE ***"
+        Ant.__init__(self)
+        if QueenAnt.instances == 1:
+            # So this is an imposter
+            self.imposter = True
+        QueenAnt.instances += 1
 
     def action(self, colony):
         """A queen ant throws a leaf, but also doubles the damage of ants
@@ -590,7 +633,38 @@ class QueenAnt:  # You should change this line
 
         Impostor queens do only one thing: reduce their own armor to 0.
         """
-        "*** YOUR CODE HERE ***"
+        # For imposter Queen
+        if self.imposter:
+            self.reduce_armor(self.armor)
+            return
+
+        colony.queen = QueenPlace(colony.queen, self.place)
+
+        def double_damage(place):
+            if not type(place.ant) == QueenAnt:
+                if place.ant is not None and not place.ant.doubled:
+                    place.ant.doubled = True
+                    place.ant.damage *= 2
+                    if place.ant.container:
+                        if not type(place.ant.ant) == QueenAnt:
+                            place.ant.ant.doubled = True
+                            place.ant.ant.damage *= 2
+
+        if type(self.place.ant) == BodyguardAnt:
+            double_damage(self.place)
+
+        forward = self.place
+        while forward.entrance is not None:
+            forward = forward.entrance
+            double_damage(forward)
+
+        backward = self.place
+        while backward.exit is not None:
+            backward = backward.exit
+            double_damage(backward)
+
+        ScubaThrower.action(self, colony)
+
 
 
 class AntRemover(Ant):
@@ -648,6 +722,7 @@ class StunThrower(ThrowerAnt):
     def throw_at(self, target):
         if target:
             apply_effect(make_stun, target, 1)
+
 
 @main
 def run(*args):
